@@ -33,6 +33,7 @@ test-online-exec:
     - |
       (tail -f -n +1 "${SERVICE_LOG_NAME}" | awk '{print "[service-logs]: " $0}' &)
     - pip install requests pillow
-    - python tests/test.py || sleep 30
+    - python tests/test.py
+    - sleep 15
   after_script:
     - rm ${SERVICE_LOG_NAME}
