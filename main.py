@@ -32,7 +32,7 @@ def predict(images, yolo_type='yolov5s', model_path=None, labels=COCO_LABELS):
     if model_path:
         # TODO: caching
         checkpoint_path = cached_file(model_path, cache_folder=CACHE_FOLDER)
-        model = torch.hub.load(CACHE_FOLDER, os.path.basename(checkpoint_path))
+        model = torch.hub.load(CACHE_FOLDER, os.path.basename(checkpoint_path), source='local')
     else:
         # Model
         model = torch.hub.load('ultralytics/yolov5', yolo_type)  # or yolov5m, yolov5l, yolov5x, custom
