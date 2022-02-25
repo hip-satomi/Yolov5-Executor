@@ -19,4 +19,4 @@ entry_points:
       input_images: path
       model:
         type: path
-      command: "python main.py {input_images} --model-path {model}"
+    command: "python main.py {input_images} --model-path {model}"
