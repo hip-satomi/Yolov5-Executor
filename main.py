@@ -80,9 +80,6 @@ yolo_type = args.yolo_type
 
 result = predict(images, yolo_type)
 
-if len(images) == 1:
-    result = result[0]
-
 result = dict(
     model = f'{git_url}@{short_hash}',
     format_version = '0.2', # version of the segmentation format
