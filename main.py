@@ -31,7 +31,7 @@ def predict(images, yolo_type='yolov5s', model_path=None, labels=COCO_LABELS):
 
     if model_path:
         # TODO: caching
-        checkpoint_path = cached_file(args.checkpoint, cache_folder=CACHE_FOLDER)
+        checkpoint_path = cached_file(model_path, cache_folder=CACHE_FOLDER)
         model = torch.load(checkpoint_path)
     else:
         # Model
