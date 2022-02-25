@@ -73,8 +73,8 @@ if len(images) == 1:
     result = result[0]
 
 result = dict(
-    model_version = f'{git_url}@{short_hash}',
-    format_version = '0.1', # version of the segmentation format
+    model = f'{git_url}@{short_hash}',
+    format_version = '0.2', # version of the segmentation format
     segmentation_data = result # [[Detection,...]]
 )
 
