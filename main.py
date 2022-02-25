@@ -44,6 +44,7 @@ def predict(images, yolo_type='yolov5s', labels=COCO_LABELS):
 
             image_segmentation.append(
                 dict(
+                    score=float(conf),
                     label = f'{labels[int(label)]}',
                     contour_coordinates = [(x1, y1), (x2, y1), (x2, y2), (x1, y2)],
                     type = 'Polygon'
