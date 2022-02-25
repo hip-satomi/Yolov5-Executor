@@ -8,7 +8,7 @@ from PIL import Image
 import glob
 
 
-from utils import get_git_revision_short_hash, get_git_url
+from git_utils import get_git_revision_short_hash, get_git_url
 
 # get the git hash of the current commit
 short_hash = get_git_revision_short_hash()
@@ -30,25 +30,20 @@ def predict(images, yolo_type='yolov5s'):
         # extract the detections for every image
         for det in image_detections:
             x1,y1,x2,y2,conf,label = det.cpu().detach().numpy()
-            x1,y1,x2,y2 = map(lambda x: np.round(x).astype(int), [x1,y1,x2,y2])
+            x1,y1,x2,y2 = map(lambda x: int(np.round(x).astype(np.int32)), [x1,y1,x2,y2])
 
             image_segmentation.append(
                 dict(
-                    label = '{label}',
+                    label = f'{int(label)}',
                     contour_coordinates = [(x1, y1), (x2, y1), (x2, y2), (x1, y2)],
                     type = 'Polygon'
                 )
             )
-        
-        # collect the image result
-        image_result = dict(
-            model_version = f'{git_url}#{short_hash}',
-            format_version = '0.1',
-            segmentation = image_segmentation
-        )
 
         # append to result list
-        full_result.append(image_result)
+        full_result.append(image_segmentation)
+
+    return full_result
 
 
 parser = argparse.ArgumentParser(description='Process some integers.')
@@ -76,6 +71,12 @@ result = predict(images, yolo_type)
 
 if len(images) == 1:
     result = result[0]
+
+result = dict(
+    model_version = f'{git_url}@{short_hash}',
+    format_version = '0.1', # version of the segmentation format
+    segmentation_data = result # [[Detection,...]]
+)
 
 with open('output.json', 'w') as output:
     json.dump(result, output)
