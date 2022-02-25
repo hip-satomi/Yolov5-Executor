@@ -16,7 +16,17 @@ git_url = get_git_url()
 
 import argparse
 
-def predict(images, yolo_type='yolov5s'):
+COCO_LABELS = ['person', 'bicycle', 'car', 'motorcycle', 'airplane', 'bus', 'train', 'truck', 'boat', 'traffic light',
+        'fire hydrant', 'stop sign', 'parking meter', 'bench', 'bird', 'cat', 'dog', 'horse', 'sheep', 'cow',
+        'elephant', 'bear', 'zebra', 'giraffe', 'backpack', 'umbrella', 'handbag', 'tie', 'suitcase', 'frisbee',
+        'skis', 'snowboard', 'sports ball', 'kite', 'baseball bat', 'baseball glove', 'skateboard', 'surfboard',
+        'tennis racket', 'bottle', 'wine glass', 'cup', 'fork', 'knife', 'spoon', 'bowl', 'banana', 'apple',
+        'sandwich', 'orange', 'broccoli', 'carrot', 'hot dog', 'pizza', 'donut', 'cake', 'chair', 'couch',
+        'potted plant', 'bed', 'dining table', 'toilet', 'tv', 'laptop', 'mouse', 'remote', 'keyboard', 'cell phone',
+        'microwave', 'oven', 'toaster', 'sink', 'refrigerator', 'book', 'clock', 'vase', 'scissors', 'teddy bear',
+        'hair drier', 'toothbrush']
+
+def predict(images, yolo_type='yolov5s', labels=COCO_LABELS):
     full_result = []
 
     # Model
@@ -34,7 +44,7 @@ def predict(images, yolo_type='yolov5s'):
 
             image_segmentation.append(
                 dict(
-                    label = f'{int(label)}',
+                    label = f'{labels[int(label)]}',
                     contour_coordinates = [(x1, y1), (x2, y1), (x2, y2), (x1, y2)],
                     type = 'Polygon'
                 )
