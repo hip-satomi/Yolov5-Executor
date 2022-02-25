@@ -8,7 +8,7 @@ from PIL import Image
 import glob
 
 
-from git_utils import get_git_revision_short_hash, get_git_url
+from git_utils import CACHE_FOLDER, cached_file, get_git_revision_short_hash, get_git_url
 
 # get the git hash of the current commit
 short_hash = get_git_revision_short_hash()
@@ -26,11 +26,16 @@ COCO_LABELS = ['person', 'bicycle', 'car', 'motorcycle', 'airplane', 'bus', 'tra
         'microwave', 'oven', 'toaster', 'sink', 'refrigerator', 'book', 'clock', 'vase', 'scissors', 'teddy bear',
         'hair drier', 'toothbrush']
 
-def predict(images, yolo_type='yolov5s', labels=COCO_LABELS):
+def predict(images, yolo_type='yolov5s', model_path=None, labels=COCO_LABELS):
     full_result = []
 
-    # Model
-    model = torch.hub.load('ultralytics/yolov5', yolo_type)  # or yolov5m, yolov5l, yolov5x, custom
+    if model_path:
+        # TODO: caching
+        checkpoint_path = cached_file(args.checkpoint, cache_folder=CACHE_FOLDER)
+        model = torch.load(checkpoint_path)
+    else:
+        # Model
+        model = torch.hub.load('ultralytics/yolov5', yolo_type)  # or yolov5m, yolov5l, yolov5x, custom
 
     # Inference
     results = model(images)
@@ -61,6 +66,7 @@ parser = argparse.ArgumentParser(description='Process some integers.')
 parser.add_argument('images', type=str, nargs='+',
                     help='list of images')
 parser.add_argument('--yolo-type', default="yolov5s", help="Use the omnipose model")
+parser.add_argument('--model-path', help="custom path/url of a model")
 
 args = parser.parse_args()
 
@@ -77,7 +83,7 @@ images = [np.asarray(Image.open(image_path)) for image_path in args.images]
 
 yolo_type = args.yolo_type
 
-result = predict(images, yolo_type)
+result = predict(images, yolo_type, args.model_path)
 
 if len(images) == 1:
     result = result[0]

@@ -13,3 +13,10 @@ entry_points:
         type: str
         default: yolov5s
     command: "python main.py {input_images} --yolo-type {model}"
+  
+  custom:
+    paramters:
+      input_images: path
+      model:
+        type: path
+      command: "python main.py {input_images} --model-path {model}"
