@@ -1,4 +1,4 @@
-name: cellpose-executor
+name: yolov5-executor
 channels:
   - pytorch
   - conda-forge
