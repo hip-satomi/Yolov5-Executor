@@ -37,3 +37,19 @@ test-online-exec:
     - sleep 15
   after_script:
     - rm ${SERVICE_LOG_NAME}
+
+test-local:
+  stage: test
+  image: continuumio/miniconda3
+  tags:
+    - big-ram
+  script:
+    - conda install mamba -c conda-forge
+    - mamba env create -f conda.yaml
+    - conda run -n yolov5-executor pip install requests pillow coverage
+    - conda run -n yolov5-executor python -m unittest tests/test_local.py
+    - conda run -n yolov5-executor python -m coverage run --source=./ -m unittest tests/test_local.py
+    - conda run -n yolov5-executor coverage xml
+  artifacts:
+    reports:
+      cobertura: coverage.xml
