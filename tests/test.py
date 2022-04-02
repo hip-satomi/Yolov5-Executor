@@ -25,6 +25,11 @@ class TestSegmentation(unittest.TestCase):
         # test entrypoints: main (Yolov5s)
         self.predict('main')
 
+    def test_custom(self):
+        """Test execution with custom model file
+        """
+        self.predict('custom', params=dict('model', 'https://github.com/ultralytics/yolov5/releases/download/v6.1/yolov5n.pt'))
+
     def predict(self, entrypoint):
         contours = []
 
