@@ -1,5 +1,10 @@
 import unittest
 import os
+import requests
+from io import BytesIO
+from PIL import Image
+import json
+import mlflow
 
 
 class TestSegmentation(unittest.TestCase):
@@ -21,11 +26,6 @@ class TestSegmentation(unittest.TestCase):
         self.predict('main')
 
     def predict(self, entrypoint):
-        import requests
-        from io import BytesIO
-        from PIL import Image
-        import json
-
         contours = []
 
         image = Image.open('test.png')

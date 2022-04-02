@@ -49,6 +49,7 @@ def predict(images, yolo_type='yolov5s', model_path=None, labels=COCO_LABELS):
 
             image_segmentation.append(
                 dict(
+                    score=float(conf),
                     label = f'{labels[int(label)]}',
                     contour_coordinates = [(x1, y1), (x2, y1), (x2, y2), (x1, y2)],
                     type = 'Polygon'
@@ -84,9 +85,6 @@ images = [np.asarray(Image.open(image_path)) for image_path in args.images]
 yolo_type = args.yolo_type
 
 result = predict(images, yolo_type, args.model_path)
-
-if len(images) == 1:
-    result = result[0]
 
 result = dict(
     model = f'{git_url}@{short_hash}',
