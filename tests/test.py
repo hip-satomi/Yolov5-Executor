@@ -22,7 +22,8 @@ class TestSegmentation(unittest.TestCase):
             file.write(r.content)
 
     def test_standard(self):
-        # test entrypoints: main (Yolov5s)
+        """test entrypoints: main (Yolov5s)
+        """
         self.predict('main')
 
     def test_custom(self):

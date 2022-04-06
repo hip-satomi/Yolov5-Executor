@@ -30,16 +30,18 @@ def predict(images, yolo_type='yolov5s', model_path=None, labels=COCO_LABELS):
     full_result = []
 
     if model_path:
-        # TODO: caching
+        # caching model (when it is a url)
         checkpoint_path = cached_file(model_path, cache_folder=CACHE_FOLDER, enforce_ending='.pt')
+        # loading model with custom checkpoint
         model = torch.hub.load('ultralytics/yolov5', 'custom', path=checkpoint_path)
     else:
-        # Model
+        # load default models given by yolov5
         model = torch.hub.load('ultralytics/yolov5', yolo_type)  # or yolov5m, yolov5l, yolov5x, custom
 
     # Inference
     results = model(images)
 
+    # convert detections into result json format
     for image_detections in results.xyxy:
         image_segmentation = []
         # extract the detections for every image
@@ -84,15 +86,19 @@ images = [np.asarray(Image.open(image_path)) for image_path in args.images]
 
 yolo_type = args.yolo_type
 
+# perform prediction
 result = predict(images, yolo_type, args.model_path)
 
+# pack results
 result = dict(
     model = f'{git_url}@{short_hash}',
     format_version = '0.2', # version of the segmentation format
     segmentation_data = result # [[Detection,...]]
 )
 
+# dump to file
 with open('output.json', 'w') as output:
     json.dump(result, output)
 
+# registor output artifact with mlflow
 mlflow.log_artifact('output.json')
