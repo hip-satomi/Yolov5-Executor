@@ -64,7 +64,7 @@ class TestSegmentation(unittest.TestCase):
 
         # send a request to the server
         response = requests.post(
-            'http://localhost:8000/batch-image-prediction/', params=params, files=multipart_form_data, timeout=600
+            'http://segserve/batch-image-prediction/', params=params, files=multipart_form_data, timeout=600
         )
 
         # output response
