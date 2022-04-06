@@ -20,7 +20,7 @@ import validators
 import requests
 import logging
 
-CACHE_FOLDER = os.path.join(os.environ['CACHE_FOLDER'])
+CACHE_FOLDER = os.path.join(os.environ.get('CACHE_FOLDER', '.cache'))
 
 def is_cached_file(resource: str, cache_folder=CACHE_FOLDER, enforce_ending='')-> bool:
     md5 = hashlib.md5(resource.encode('utf-8')).hexdigest()
