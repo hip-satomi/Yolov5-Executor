@@ -22,10 +22,19 @@ class TestSegmentation(unittest.TestCase):
             file.write(r.content)
 
     def test_standard(self):
-        # test entrypoints: main (Yolov5s)
+        """test entrypoints: main (Yolov5s)
+        """
         self.predict('main')
 
-    def predict(self, entrypoint):
+    def test_custom(self):
+        """Test execution with custom model file
+        """
+        self.predict('custom', params=dict(model='https://github.com/ultralytics/yolov5/releases/download/v6.1/yolov5n.pt'))
+
+    def predict(self, entrypoint, params=None):
+        if params is None:
+            params = {}
+        
         contours = []
 
         image = Image.open('test.png')
@@ -44,7 +53,7 @@ class TestSegmentation(unittest.TestCase):
         CI_COMMIT_SHA = os.environ['CI_COMMIT_SHA']
         CI_REPOSITORY_URL = os.environ['CI_REPOSITORY_URL']
 
-        additional_parameters = {}
+        additional_parameters = params
 
         # exactly request segmentation with the current repo version
         params = dict(

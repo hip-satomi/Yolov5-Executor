@@ -14,3 +14,4 @@ dependencies:
   - pip:
     - mlflow
     - -r requirements.txt
+    - validators

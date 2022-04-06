@@ -8,7 +8,7 @@ from PIL import Image
 import glob
 
 
-from git_utils import get_git_revision_short_hash, get_git_url
+from git_utils import CACHE_FOLDER, cached_file, get_git_revision_short_hash, get_git_url
 
 # get the git hash of the current commit
 short_hash = get_git_revision_short_hash()
@@ -26,15 +26,22 @@ COCO_LABELS = ['person', 'bicycle', 'car', 'motorcycle', 'airplane', 'bus', 'tra
         'microwave', 'oven', 'toaster', 'sink', 'refrigerator', 'book', 'clock', 'vase', 'scissors', 'teddy bear',
         'hair drier', 'toothbrush']
 
-def predict(images, yolo_type='yolov5s', labels=COCO_LABELS):
+def predict(images, yolo_type='yolov5s', model_path=None, labels=COCO_LABELS):
     full_result = []
 
-    # Model
-    model = torch.hub.load('ultralytics/yolov5', yolo_type)  # or yolov5m, yolov5l, yolov5x, custom
+    if model_path:
+        # caching model (when it is a url)
+        checkpoint_path = cached_file(model_path, cache_folder=CACHE_FOLDER, enforce_ending='.pt')
+        # loading model with custom checkpoint
+        model = torch.hub.load('ultralytics/yolov5', 'custom', path=checkpoint_path)
+    else:
+        # load default models given by yolov5
+        model = torch.hub.load('ultralytics/yolov5', yolo_type)  # or yolov5m, yolov5l, yolov5x, custom
 
     # Inference
     results = model(images)
 
+    # convert detections into result json format
     for image_detections in results.xyxy:
         image_segmentation = []
         # extract the detections for every image
@@ -62,6 +69,7 @@ parser = argparse.ArgumentParser(description='Process some integers.')
 parser.add_argument('images', type=str, nargs='+',
                     help='list of images')
 parser.add_argument('--yolo-type', default="yolov5s", help="Use the omnipose model")
+parser.add_argument('--model-path', help="custom path/url of a model")
 
 args = parser.parse_args()
 
@@ -78,15 +86,19 @@ images = [np.asarray(Image.open(image_path)) for image_path in args.images]
 
 yolo_type = args.yolo_type
 
-result = predict(images, yolo_type)
+# perform prediction
+result = predict(images, yolo_type, args.model_path)
 
+# pack results
 result = dict(
     model = f'{git_url}@{short_hash}',
     format_version = '0.2', # version of the segmentation format
     segmentation_data = result # [[Detection,...]]
 )
 
+# dump to file
 with open('output.json', 'w') as output:
     json.dump(result, output)
 
+# registor output artifact with mlflow
 mlflow.log_artifact('output.json')
