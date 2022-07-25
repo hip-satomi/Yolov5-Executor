@@ -12,6 +12,6 @@ dependencies:
   #- _libgcc_mutex=0.1=main
   #- blas=1.0=mkl
   - pip:
-    - mlflow
+    - mlflow==1.22.0
     - -r requirements.txt
     - validators
