@@ -52,4 +52,6 @@ test-local:
     - conda run -n ${CONDA_ENV} coverage xml
   artifacts:
     reports:
-      cobertura: coverage.xml
+      coverage_report:
+        coverage_format: cobertura
+        path: coverage.xml
