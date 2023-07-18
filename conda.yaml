@@ -14,5 +14,5 @@ dependencies:
   #- blas=1.0=mkl
   - pip:
     - mlflow==1.22.0
-    - -r requirements.txt
+    - -r requirements_yolo.txt
     - validators
